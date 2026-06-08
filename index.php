@@ -286,12 +286,33 @@ function renderText(array $d, array $s): string
 function renderImage(array $d): string
 {
     if (empty($d['url'])) return '';
-    $maxH    = isset($d['max_height']) ? 'max-height:' . (int) $d['max_height'] . 'px;' : '';
-    $fit     = e($d['object_fit'] ?? 'contain');
     $caption = $d['caption'] ?? '';
-    $html    = '<figure class="block-image">'
-        . '<img src="' . e($d['url']) . '" alt="' . e($caption) . '" '
-        . 'style="object-fit:' . $fit . ';' . $maxH . '">';
+    // Sistem baru: img_width_value/unit, img_height_value, img_align (lihat ImageBlockRenderer.vue di karva.id).
+    $isNew = array_key_exists('img_width_value', $d);
+
+    if ($isNew) {
+        $widthVal  = max(1, (int) ($d['img_width_value'] ?? 100));
+        $widthUnit = ($d['img_width_unit'] ?? '%') === 'px' ? 'px' : '%';
+        $imgStyle  = "width:{$widthVal}{$widthUnit};";
+        if (!empty($d['img_height_value'])) {
+            $fit       = e($d['object_fit'] ?? 'cover');
+            $imgStyle .= 'height:' . (int) $d['img_height_value'] . 'px;object-fit:' . $fit . ';';
+        } else {
+            $imgStyle .= 'height:auto;';
+        }
+        $align   = $d['img_align'] ?? 'center';
+        $justify = $align === 'left' ? 'flex-start' : ($align === 'right' ? 'flex-end' : 'center');
+        $imgEl   = '<div style="display:flex;justify-content:' . $justify . '">'
+            . '<img src="' . e($d['url']) . '" alt="' . e($caption) . '" style="' . $imgStyle . '">'
+            . '</div>';
+    } else {
+        $maxH  = isset($d['max_height']) ? 'max-height:' . (int) $d['max_height'] . 'px;' : '';
+        $fit   = e($d['object_fit'] ?? 'contain');
+        $imgEl = '<img src="' . e($d['url']) . '" alt="' . e($caption) . '" '
+            . 'style="object-fit:' . $fit . ';' . $maxH . '">';
+    }
+
+    $html = '<figure class="block-image">' . $imgEl;
     if ($caption) $html .= '<figcaption>' . e($caption) . '</figcaption>';
     return $html . '</figure>';
 }
