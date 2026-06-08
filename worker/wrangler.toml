@@ -1,0 +1,11 @@
+name = "karva-click"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Ganti dengan Account ID Cloudflare kamu
+# Bisa dilihat di: https://dash.cloudflare.com → kanan bawah sidebar
+account_id = "6c7baf3ac2c5ea8f12a34783887f258b"
+
+# Route dikonfigurasi manual di Cloudflare dashboard
+# Workers & Pages → karva-click → Settings → Triggers → Add route
+# Pattern: karva.click/*   Zone: karva.click
