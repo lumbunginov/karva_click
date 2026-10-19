@@ -12,7 +12,7 @@ export default {
     // /page/:slug → redirect ke /:slug (canonical URL)
     const pageMatch = path.match(/^\/page\/([^/]+)\/?$/);
     if (pageMatch) {
-      return Response.redirect(`https://karva.click/${pageMatch[1]}`, 301);
+      return Response.redirect(`${url.origin}/${pageMatch[1]}`, 301);
     }
 
     const slug = path.split('/').filter(Boolean)[0] ?? '';
